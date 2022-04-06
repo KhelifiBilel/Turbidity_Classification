@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:email_password_login/imageupload/image_retrive.dart';
+import 'package:email_password_login/imageupload/image_retrieve.dart';
 import 'package:email_password_login/imageupload/image_upload.dart';
 import 'package:email_password_login/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,4 +1,4 @@
-package com.example.flutter_application_3
+package com.example.email_password_login
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -4,8 +4,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter_camera_overlay/flutter_camera_overlay.dart';
+import 'package:flutter_camera_overlay/model.dart'; 
 
 import '../screens/loading.dart';
+import 'test.dart';
 
 class ImageUpload extends StatefulWidget {
   
@@ -27,8 +31,9 @@ class _ImageUploadState extends State<ImageUpload> {
   // picking the image
 
   Future picking() async {
-    final pick = await imagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
+    final pick = await imagePicker.pickImage(source: ImageSource.camera);
+ 
+   setState(() {
       if (pick != null) {
         _image = File(pick.path);
       } else {
@@ -38,10 +43,12 @@ class _ImageUploadState extends State<ImageUpload> {
    
   }
 
+
   // uploading the image to firebase cloudstore
   Future uploadImage(File _image,int value) async {
     //final imgId = DateTime.now().millisecondsSinceEpoch.toString();
     String turb_class='';String subclass='';
+
     //Organisation des classes de turbidité
     if(value<200){  turb_class="Low_Turbidity";
       if (value<50){ subclass='1st_subclass';}
@@ -134,7 +141,7 @@ class _ImageUploadState extends State<ImageUpload> {
                                         : Image.file(_image!)),
                                 ElevatedButton(
                                     onPressed: () {
-                                      picking();
+                                       mainn();
                                     },
                                     child: const Text("Select Image")),
                                 ElevatedButton(
