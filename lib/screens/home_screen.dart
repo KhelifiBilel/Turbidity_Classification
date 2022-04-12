@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .get()
         .then((value) {
       this.loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
+      //setState(() {});
     });
   }
 
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 15,
               ),
-              ElevatedButton(
+             ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                       context,

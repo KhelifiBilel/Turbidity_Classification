@@ -21,8 +21,7 @@ class ExampleCameraOverlay extends StatefulWidget {
 
 class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
   OverlayFormat format = OverlayFormat.cardID1;
-  int tab = 0;
-
+  File? file;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,10 +39,35 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                     style: TextStyle(color: Colors.black),
                   ));
             }
-            return CameraOverlay(
-    snapshot.data!.first,
-    CardOverlay.byFormat(format),
-    (XFile file) => print(file.path),
+              return CameraOverlay(
+                snapshot.data!.first,
+                CardOverlay.byFormat(format),
+                (file) => showDialog(
+                      context: context,
+                      barrierColor: Colors.black,
+                      builder: (context) {
+                        CardOverlay overlay = CardOverlay.byFormat(format);
+                        return AlertDialog(
+                            actionsAlignment: MainAxisAlignment.center,
+                          
+                            content: SizedBox(
+                                width: double.infinity,
+                                child: AspectRatio(
+                                  aspectRatio: overlay.ratio!,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                      fit: BoxFit.fitWidth,
+                                      alignment: FractionalOffset.center,
+                                      image: FileImage(File(file.path),
+                                       // image: FileImage(File(""),
+
+                                      ),
+                                    )),
+                                  ),
+                                )));
+                      },
+                    ),
     info: '',
     label: '');
           } else {
