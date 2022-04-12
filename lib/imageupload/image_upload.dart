@@ -8,9 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_camera_overlay/flutter_camera_overlay.dart';
 import 'package:flutter_camera_overlay/model.dart';
-
+import 'package:image/image.dart';
+import 'dart:math';
+import 'package:flutter/rendering.dart';
+import 'package:image/image.dart' as IMG;
 import '../screens/loading.dart';
-import 'test.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -24,31 +26,36 @@ class ImageUpload extends StatefulWidget {
 }
 
 class _ImageUploadState extends State<ImageUpload> {
+
+   Future cropSquare(String srcFilePath, String destFilePath,int value) async {
+    var bytes = await File(srcFilePath).readAsBytes();
+    IMG.Image? src = IMG.decodeImage(bytes);
+
+    var cropSize = min(src!.width-50, src.height-50);
+    int offsetX = (src.width - min(src.width, src.height)) ~/ 2;
+    int offsetY = (src.height - min(src.width, src.height)) ~/ 2;
+
+    IMG.Image destImage =
+      IMG.copyCrop(src, offsetX, offsetY, cropSize-60, cropSize-60);
+
+    
+    destImage = IMG.flipVertical(destImage);
+    
+
+    var jpg = IMG.encodeJpg(destImage);
+    Future<File> f= File(destFilePath).writeAsBytes(jpg);
+    uploadImage(f, value);
+  }
   // initializing some value
   static File? _image;
-
+  File? _imagee;
   final imagePicker = ImagePicker();
   String? downloadURL;
   String? value;
   bool loading = false;
 
-  // picking the image
-
-  /*Future picking() async {
-    //final pick = await imagePicker.pickImage(source: ImageSource.camera);
-   
-   setState(() {_image = _ExampleCameraOverlayState.file;});
-     if (_image != null) {
-       _image = File(_ExampleCameraOverlayState.file.path);
-      } else {
-        showSnackBar("No File selected",
-         Duration(milliseconds: 1000));
-      }
-    }
-   */
-
   // uploading the image to firebase cloudstore
-  Future uploadImage(File? _image, int value) async {
+  Future uploadImage(var _image, int value) async {
     //final imgId = DateTime.now().millisecondsSinceEpoch.toString();
     String turb_class = '';
     String subclass = '';
@@ -114,7 +121,7 @@ class _ImageUploadState extends State<ImageUpload> {
         .child(subclass)
         .child("post_$value");
 
-    await reference.putFile(_image!);
+    await reference.putFile(await _image!);
     downloadURL = await reference.getDownloadURL();
 
     // cloud firestore
@@ -176,15 +183,12 @@ class _ImageUploadState extends State<ImageUpload> {
                                                         decoration:
                                                             BoxDecoration(
                                                                 border: Border.all(
-                                                                    color: Color.fromARGB(255, 255, 255, 255)),
+                                                                    color: Colors.white),
                                                                     borderRadius: BorderRadius.circular(4),
                                                                 image:
-                                                                    DecorationImage(
-                                                                  fit: BoxFit.cover,
-                                                                  alignment:
-                                                                      FractionalOffset.center,
-                                                                  image:
-                                                                      FileImage(File(_image!.path),),
+                                                                    DecorationImage(fit: BoxFit.cover,
+                                                                                   alignment: FractionalOffset.center,
+                                                                                    image: FileImage(File(_image!.path),),
                                                                 ))),
                                                   ),
                                       ElevatedButton(
@@ -199,13 +203,14 @@ class _ImageUploadState extends State<ImageUpload> {
                                           onPressed: () {
                                             if (_image != null &&
                                                 turbidity.text != "") {
-                                              var value =
+                                              int value =
                                                   int.parse(turbidity.text);
                                               setState(() {
                                                 loading = true;
                                               });
-                                              //   uploadImage(_ExampleCameraOverlayState.file,value);
-                                              uploadImage(_image, value);
+                                              cropSquare(_image!.path ,_image!.path, value);
+                                            //  _image=File('assets/a.jpg');
+                                            //  uploadImage(_imagee, value);
                                             } else if (_image == null &&
                                                 turbidity.text == "") {
                                               loading = false;
@@ -305,14 +310,14 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                      //   CardOverlay overlay = CardOverlay.byFormat(format);
                         return AlertDialog(
                             actionsAlignment: MainAxisAlignment.center,
-                            backgroundColor: Color.fromARGB(255, 0, 0, 0),
+                            backgroundColor: Colors.black,
                             title: const Text('Confirm the image',
                                 style: TextStyle(color: Colors.white),
                                 textAlign: TextAlign.center),
                             actions: [
                               OutlinedButton(
                                   // onPressed: () => Navigator.of(context).pop(),
-                                  onPressed: () => setState(() async {
+                                  onPressed: () => setState(()  {
                                         //  _image = File(_ExampleCameraOverlayState.file.path);
 
                                         _ImageUploadState._image =File(file.path);
@@ -330,7 +335,6 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                                   child: const Icon(Icons.check))
                             ],
                             content: SizedBox(
-                                //width: 300,
                                 child: AspectRatio(
                                   aspectRatio: 1.58,
                                   //aspectRatio: overlay.ratio!,

@@ -6,9 +6,9 @@ class Loading extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color.fromARGB(255, 38, 36, 35),
+      color: Color.fromARGB(255, 43, 124, 97),
       child: Center(
-        child: SpinKitSpinningLines(color: Colors.white,size: 50,),
+        child: SpinKitFoldingCube(color: Colors.white,size: 50,),
       ),
     );
   }
