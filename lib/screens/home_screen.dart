@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
+  static UserModel loggedInUser = UserModel();
 
   @override
   void initState() {
@@ -26,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
-      //setState(() {});
+      loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
     });
   }
 

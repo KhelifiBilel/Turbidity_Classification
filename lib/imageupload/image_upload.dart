@@ -12,13 +12,17 @@ import 'package:image/image.dart';
 import 'dart:math';
 import 'package:flutter/rendering.dart';
 import 'package:image/image.dart' as IMG;
+import '../model/user_model.dart';
 import '../screens/loading.dart';
+import '../screens/home_screen.dart';
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 class ImageUpload extends StatefulWidget {
   final String? userId;
+ 
   const ImageUpload({Key? key, this.userId}) : super(key: key);
 
   @override
@@ -31,15 +35,15 @@ class _ImageUploadState extends State<ImageUpload> {
     var bytes = await File(srcFilePath).readAsBytes();
     IMG.Image? src = IMG.decodeImage(bytes);
 
-    var cropSize = min(src!.width-50, src.height-50);
+    var cropSize = min(src!.width, src!.height);
     int offsetX = (src.width - min(src.width, src.height)) ~/ 2;
     int offsetY = (src.height - min(src.width, src.height)) ~/ 2;
 
     IMG.Image destImage =
-      IMG.copyCrop(src, offsetX, offsetY, cropSize-60, cropSize-60);
+      IMG.copyCrop(src, offsetX+10, offsetY+60, cropSize-110, cropSize-160);
 
     
-    destImage = IMG.flipVertical(destImage);
+    //destImage = IMG.flipVertical(destImage);
     
 
     var jpg = IMG.encodeJpg(destImage);
@@ -48,14 +52,12 @@ class _ImageUploadState extends State<ImageUpload> {
   }
   // initializing some value
   static File? _image;
-  File? _imagee;
-  final imagePicker = ImagePicker();
   String? downloadURL;
   String? value;
   bool loading = false;
 
   // uploading the image to firebase cloudstore
-  Future uploadImage(var _image, int value) async {
+  Future uploadImage  (var _image, int value) async {
     //final imgId = DateTime.now().millisecondsSinceEpoch.toString();
     String turb_class = '';
     String subclass = '';
@@ -111,7 +113,6 @@ class _ImageUploadState extends State<ImageUpload> {
         subclass = '8th_subclass';
       }
     }
-
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     Reference reference = FirebaseStorage.instance
         .ref()
@@ -121,17 +122,18 @@ class _ImageUploadState extends State<ImageUpload> {
         .child(subclass)
         .child("post_$value");
 
-    await reference.putFile(await _image!);
+    await reference.putFile( await _image!);
     downloadURL = await reference.getDownloadURL();
 
     // cloud firestore
-    setState(() => loading = false);
     await firebaseFirestore
         .collection("users")
         .doc(widget.userId)
         .collection("images")
         .add({'downloadURL': downloadURL, 'value': value}).whenComplete(
             () => showSnackBar("Image Uploaded", Duration(seconds: 4)));
+    setState(() => loading = false);
+    
   }
 
   @override
@@ -188,6 +190,7 @@ class _ImageUploadState extends State<ImageUpload> {
                                                                 image:
                                                                     DecorationImage(fit: BoxFit.cover,
                                                                                    alignment: FractionalOffset.center,
+                                                                                   
                                                                                     image: FileImage(File(_image!.path),),
                                                                 ))),
                                                   ),
@@ -196,7 +199,7 @@ class _ImageUploadState extends State<ImageUpload> {
                                             
                                             setState(() {
                                              mainn(context);  });
-                                            // picking();
+                                            
                                           },
                                           child: const Text("Select Image")),
                                       ElevatedButton(
@@ -208,9 +211,11 @@ class _ImageUploadState extends State<ImageUpload> {
                                               setState(() {
                                                 loading = true;
                                               });
+                                              //CROP + UPLOADING
                                               cropSquare(_image!.path ,_image!.path, value);
-                                            //  _image=File('assets/a.jpg');
-                                            //  uploadImage(_imagee, value);
+                                             setState(() {
+                                                _image = null;
+                                              });
                                             } else if (_image == null &&
                                                 turbidity.text == "") {
                                               loading = false;
@@ -283,6 +288,7 @@ class ExampleCameraOverlay extends StatefulWidget {
 class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
   OverlayFormat format = OverlayFormat.cardID1;
   static File file = File('');
+   //UserModel loggedInUser = HomeScreen.loggedInUser;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -312,7 +318,7 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                             actionsAlignment: MainAxisAlignment.center,
                             backgroundColor: Colors.black,
                             title: const Text('Confirm the image',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.black),
                                 textAlign: TextAlign.center),
                             actions: [
                               OutlinedButton(
@@ -320,17 +326,22 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                                   onPressed: () => setState(()  {
                                         //  _image = File(_ExampleCameraOverlayState.file.path);
 
-                                        _ImageUploadState._image =File(file.path);
+                                   /*     _ImageUploadState._image =File(file.path);
                                         setState(() {
                                           _ImageUploadState._image =
                                               File(file.path);
-                                        });
+                                        });*/
+                                        _ImageUploadState._image =File(file.path);
+
                                         Navigator.of(context).pop();
+                                       // setState(() =>{ _ImageUploadState._image =File(file.path)});
                                         Navigator.of(context).pop();
                                         Navigator.of(context).pop();
                                         Navigator.push(context,
                                             MaterialPageRoute(
-                                                builder: (context) => ImageUpload( )));
+                                                builder: (context) => ImageUpload( 
+                                                  //    userId:ImageUpload.userId ,
+                                                )));
                                       }),
                                   child: const Icon(Icons.check))
                             ],
@@ -339,7 +350,7 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                                   aspectRatio: 1.58,
                                   //aspectRatio: overlay.ratio!,
 
-                                  child: Container(width: 165,
+                                  child: Container(width: 220,
                                                  //  height: 100,
                                     decoration: BoxDecoration(
                                         image: DecorationImage(

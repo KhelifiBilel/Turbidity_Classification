@@ -6,7 +6,7 @@ class Loading2 extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color.fromARGB(255, 45, 43, 40),
+      color: Color.fromARGB(255, 0, 160, 104),
       child: Center(
         child: SpinKitCubeGrid(color: Color.fromARGB(255, 255, 255, 255),size: 50,),
       ),
