@@ -58,61 +58,72 @@ class _ImageUploadState extends State<ImageUpload> {
 
   // uploading the image to firebase cloudstore
   Future uploadImage  (var _image, int value) async {
-    //final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+    //final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final time = DateTime.now();
+    final m=time.month;
+    final d=time.day;
+    final min=time.minute;
+    final h=time.hour;
+    final sec=time.second;
+    
     String turb_class = '';
     String subclass = '';
 
     //Organisation des classes de turbidité
-    if (value < 200) {
-      turb_class = "Low_Turbidity";
+    if (value < 150) {            // first range
+      turb_class = "very_Low_Turbidity";
       if (value < 50) {
         subclass = '1st_subclass';
       } else if (value < 100) {
         subclass = '2nd_subclass';
-      } else if (value < 150) {
+      } else {
         subclass = '3rd_subclass';
-      } else if (value < 200) {
-        subclass = '4th_subclass';
       }
-    } else if (value < 600) {
-      turb_class = "Medium_Turbidity";
-      if (value < 250) {
+    } else if (value < 400) {      // 2nd range
+      turb_class = "Low_Turbidity";
+      if (value < 200) {
         subclass = '1st_subclass';
-      } else if (value < 300) {
+      } else if (value < 250) {
         subclass = '2nd_subclass';
+      } else if (value < 300) {
+        subclass = '3rd_subclass';
       } else if (value < 350) {
-        subclass = '3rd_subclass';
-      } else if (value < 300) {
         subclass = '4th_subclass';
-      } else if (value < 450) {
+      } else  {
         subclass = '5th_subclass';
-      } else if (value < 500) {
-        subclass = '6th_subclass';
-      } else if (value < 550) {
-        subclass = '7th_subclass';
-      } else if (value < 600) {
-        subclass = '8th_subclass';
-      }
-    } else if (value < 1000) {
-      turb_class = "High_Turbidity";
-      if (value < 650) {
+      } 
+    } 
+    else if (value < 700) {          // 3rd range
+      turb_class = "Medium_Turbidity";
+      if (value < 450) {
         subclass = '1st_subclass';
-      } else if (value < 700) {
+      } else if (value < 500) {
         subclass = '2nd_subclass';
-      } else if (value < 750) {
+      } else if (value < 550) {
         subclass = '3rd_subclass';
-      } else if (value < 800) {
+      } else if (value < 600) {
         subclass = '4th_subclass';
-      } else if (value < 850) {
+      } else if (value < 650) {
         subclass = '5th_subclass';
-      } else if (value < 900) {
+      } else  {
         subclass = '6th_subclass';
-      } else if (value < 950) {
-        subclass = '7th_subclass';
-      } else if (value < 1000) {
-        subclass = '8th_subclass';
-      }
+      } 
     }
+    else {                // 4th range
+      turb_class = "High_Turbidity";
+      if (value < 750) {
+        subclass = '1st_subclass';
+      } else if (value < 800) {
+        subclass = '2nd_subclass';
+      } else if (value < 850) {
+        subclass = '3rd_subclass';
+      } else if (value < 900) {
+        subclass = '4th_subclass';
+      } else if (value < 950) {
+        subclass = '5th_subclass';
+      } else  subclass = '6th_subclass';
+      }
+
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     Reference reference = FirebaseStorage.instance
         .ref()
@@ -120,7 +131,7 @@ class _ImageUploadState extends State<ImageUpload> {
         .child('images')
         .child(turb_class)
         .child(subclass)
-        .child("post_$value");
+        .child("turbidity=$value\_$d\-$m\::$h\:$min\:$sec");
 
     await reference.putFile( await _image!);
     downloadURL = await reference.getDownloadURL();
