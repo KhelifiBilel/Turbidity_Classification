@@ -4,6 +4,7 @@ import 'package:email_password_login/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:email_password_login/screens/loading1.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -23,6 +24,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final emailEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
   final confirmPasswordEditingController = new TextEditingController();
+  bool loading=false;
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +180,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           )),
     );
 
-    return Scaffold(
+    return loading ? Loading1() :Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -234,11 +236,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
+      setState(() =>
+        loading=true
+      );
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {postDetailsToFirestore()})
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
+        setState(()=> loading=false); 
       });
     }
   }
