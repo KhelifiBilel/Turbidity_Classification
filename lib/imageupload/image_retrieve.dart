@@ -18,7 +18,7 @@ class _ImageRetriveState extends State<ImageRetrive> {
         stream: FirebaseFirestore.instance
             .collection("users1")
             .doc(widget.userId)
-            .collection("images")
+            .collection("imgs")
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {

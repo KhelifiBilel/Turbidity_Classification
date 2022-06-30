@@ -125,8 +125,8 @@ class _ImageUploadState extends State<ImageUpload> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     Reference reference = FirebaseStorage.instance
         .ref()
-        .child('${widget.userId}/images')
-        .child('images')
+        .child('${widget.userId}/imgs')
+        .child('imgs')
         .child(turb_class)
         .child(subclass)
         .child("turbidity=$value\_$d\-$m\-$year::$h\:$min\:$sec");
@@ -138,7 +138,7 @@ class _ImageUploadState extends State<ImageUpload> {
     await firebaseFirestore
         .collection("users1")
         .doc(widget.userId)
-        .collection("images")
+        .collection("imgs")
         .add({'downloadURL': downloadURL, 'value': value}).whenComplete(
             () => showSnackBar("Image Uploaded", Duration(seconds: 4)));
     setState(() => loading = false);
@@ -152,7 +152,9 @@ class _ImageUploadState extends State<ImageUpload> {
         ? Loading()
         : Scaffold(
             appBar: AppBar(
-              title: const Text("Upload Image "),
+              title: const Text("Upload Image ",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),),
             ),
             body: Center(
               child: Padding(
@@ -163,7 +165,9 @@ class _ImageUploadState extends State<ImageUpload> {
                           height: 430,
                           width: double.infinity,
                           child: Column(children: [
-                            const Text("Upload Image"),
+                            const Text("Upload Image",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),),
                             const SizedBox(
                               height: 10,
                             ),
@@ -173,7 +177,7 @@ class _ImageUploadState extends State<ImageUpload> {
                                 width: 300,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(color: Colors.red),
+                                  border: Border.all(color: Colors.lightBlue),
                                 ),
                                 child: Center(
                                   child: Column(
@@ -210,7 +214,9 @@ class _ImageUploadState extends State<ImageUpload> {
                                        
                                             
                                           },
-                                          child: const Text("Select Image")),
+                                          child: const Text("Select Image",textAlign: TextAlign.center,
+                            style: TextStyle(
+                                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),)),
                                       ElevatedButton(
                                           onPressed: () {
                                             if (_image != null &&
@@ -244,7 +250,9 @@ class _ImageUploadState extends State<ImageUpload> {
                                                   Duration(milliseconds: 1000));
                                             }
                                           },
-                                          child: const Text("Upload Image")),
+                                          child: const Text("Upload Image",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),)),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 16),

@@ -76,7 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 userId: loggedInUser.uid
                               )));
                 },
-                child: const Text("Upload Image"),
+                
+                child: const Text("Upload Image",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -86,7 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) =>
                               ImageRetrive(userId: loggedInUser.uid)));
                 },
-                child: const Text("Show Uploads"),
+                child: const Text("Show Uploads",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),),
               ),
             ],
           ),
@@ -99,7 +104,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final appBarHeight = AppBar().preferredSize.height;
     return PreferredSize(
         preferredSize: Size.fromHeight(appBarHeight),
-        child: AppBar(title: const Text("Profile"), actions: [
+        child: AppBar(title: const Text("Profile",textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),), actions: [
           IconButton(
               onPressed: () {
                 logout(context);
