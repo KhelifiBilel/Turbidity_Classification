@@ -16,13 +16,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
-  static UserModel loggedInUser = UserModel();
+   UserModel loggedInUser = UserModel();
+    
 
   @override
   void initState() {
     super.initState();
     FirebaseFirestore.instance
-        .collection("users")
+        .collection("users1")
         .doc(user!.uid)
         .get()
         .then((value) {
@@ -47,8 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Image.asset("assets/logo.png", fit: BoxFit.contain),
               ),
               Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "Welcome to TurbiLearn",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 10,
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ImageUpload(
-                                userId: loggedInUser.uid,
+                                userId: loggedInUser.uid
                               )));
                 },
                 child: const Text("Upload Image"),

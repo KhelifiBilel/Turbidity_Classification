@@ -16,7 +16,7 @@ class _ImageRetriveState extends State<ImageRetrive> {
       appBar: AppBar(title: const Text("Your Images")),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection("users")
+            .collection("users1")
             .doc(widget.userId)
             .collection("images")
             .snapshots(),

@@ -450,6 +450,8 @@ PODS:
     - gRPC-Core/Interface (= 1.28.2)
   - gRPC-Core/Interface (1.28.2)
   - GTMSessionFetcher/Core (1.7.1)
+  - image_crop (0.0.1):
+    - Flutter
   - image_picker (0.0.1):
     - Flutter
   - leveldb-library (1.22.1)
@@ -469,6 +471,7 @@ DEPENDENCIES:
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - image_crop (from `.symlinks/plugins/image_crop/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
 
 SPEC REPOS:
@@ -506,6 +509,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  image_crop:
+    :path: ".symlinks/plugins/image_crop/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
 
@@ -530,6 +535,7 @@ SPEC CHECKSUMS:
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: 4577a4cc914a5a07c40a8a0ad0acc22080418c2d
+  image_crop: e0a67085d3ebf3cf46ca46d61c53a082507b0bc3
   image_picker: 541dcbb3b9cf32d87eacbd957845d8651d6c62c3
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96

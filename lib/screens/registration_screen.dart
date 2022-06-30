@@ -266,7 +266,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.secondName = secondNameEditingController.text;
 
     await firebaseFirestore
-        .collection("users")
+        .collection("users1")
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully :) ");

@@ -21,9 +21,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 class ImageUpload extends StatefulWidget {
-  final String? userId;
+  String? userId;
  
-  const ImageUpload({Key? key, this.userId}) : super(key: key);
+  ImageUpload({Key? key, this.userId}) : super(key: key);
 
   @override
   State<ImageUpload> createState() => _ImageUploadState();
@@ -35,20 +35,17 @@ class _ImageUploadState extends State<ImageUpload> {
     var bytes = await File(srcFilePath).readAsBytes();
     IMG.Image? src = IMG.decodeImage(bytes);
 
-    var cropSize = min(src!.width, src!.height);
+    var cropSize = min(src!.width, src.height);
     int offsetX = (src.width - min(src.width, src.height)) ~/ 2;
     int offsetY = (src.height - min(src.width, src.height)) ~/ 2;
 
     IMG.Image destImage =
       IMG.copyCrop(src, offsetX+10, offsetY+60, cropSize-110, cropSize-160);
 
-    
-    //destImage = IMG.flipVertical(destImage);
-    
-
     var jpg = IMG.encodeJpg(destImage);
     Future<File> f= File(destFilePath).writeAsBytes(jpg);
     uploadImage(f, value);
+  
   }
   // initializing some value
   static File? _image;
@@ -58,7 +55,7 @@ class _ImageUploadState extends State<ImageUpload> {
 
   // uploading the image to firebase cloudstore
   Future uploadImage  (var _image, int value) async {
-    //final time = DateTime.now().millisecondsSinceEpoch.toString();
+
     final time = DateTime.now();
     final m=time.month;
     final d=time.day;
@@ -128,7 +125,7 @@ class _ImageUploadState extends State<ImageUpload> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     Reference reference = FirebaseStorage.instance
         .ref()
-        //.child('${widget.userId}/images')
+        .child('${widget.userId}/images')
         .child('images')
         .child(turb_class)
         .child(subclass)
@@ -139,7 +136,7 @@ class _ImageUploadState extends State<ImageUpload> {
 
     // cloud firestore
     await firebaseFirestore
-        .collection("users")
+        .collection("users1")
         .doc(widget.userId)
         .collection("images")
         .add({'downloadURL': downloadURL, 'value': value}).whenComplete(
@@ -203,14 +200,14 @@ class _ImageUploadState extends State<ImageUpload> {
                                                                     DecorationImage(fit: BoxFit.cover,
                                                                                    alignment: FractionalOffset.center,
                                                                                    
-                                                                                    image: FileImage(File(_image!.path),),
+                                                                                    image: FileImage(File(_image!.path))
                                                                 ))),
                                                   ),
                                       ElevatedButton(
                                           onPressed: () {
-                                            
-                                            setState(() {
-                                             mainn(context);  });
+                                            Navigator.push(
+                                         context, MaterialPageRoute(builder: (context) => ExampleCameraOverlay()));
+                                       
                                             
                                           },
                                           child: const Text("Select Image")),
@@ -218,11 +215,12 @@ class _ImageUploadState extends State<ImageUpload> {
                                           onPressed: () {
                                             if (_image != null &&
                                                 turbidity.text != "") {
-                                              int value =
-                                                  int.parse(turbidity.text);
+                                              int value =int.parse(turbidity.text);
+
                                               setState(() {
                                                 loading = true;
                                               });
+
                                               //CROP + UPLOADING
                                               cropSquare(_image!.path ,_image!.path, value);
                                              setState(() {
@@ -280,15 +278,7 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 }
 
-mainn(context) {
-  WidgetsFlutterBinding.ensureInitialized();
-  /*runApp(
-    const ExampleCameraOverlay(),
-  );*/
 
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => ExampleCameraOverlay()));
-}
 
 class ExampleCameraOverlay extends StatefulWidget {
   const ExampleCameraOverlay({Key? key}) : super(key: key);
@@ -300,7 +290,9 @@ class ExampleCameraOverlay extends StatefulWidget {
 class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
   OverlayFormat format = OverlayFormat.cardID1;
   static File file = File('');
-   //UserModel loggedInUser = HomeScreen.loggedInUser;
+
+   UserModel loggedInUser = UserModel();
+   
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -325,48 +317,54 @@ class _ExampleCameraOverlayState extends State<ExampleCameraOverlay> {
                       context: context,
                       barrierColor: Colors.black,
                       builder: (context) {
-                     //   CardOverlay overlay = CardOverlay.byFormat(format);
                         return AlertDialog(
                             actionsAlignment: MainAxisAlignment.center,
                             backgroundColor: Colors.black,
                             title: const Text('Confirm the image',
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.white),
                                 textAlign: TextAlign.center),
                             actions: [
                               OutlinedButton(
-                                  // onPressed: () => Navigator.of(context).pop(),
                                   onPressed: () => setState(()  {
-                                        //  _image = File(_ExampleCameraOverlayState.file.path);
+                                       //   _ImageUploadState._image = File(_ExampleCameraOverlayState.file.path);
 
-                                   /*     _ImageUploadState._image =File(file.path);
-                                        setState(() {
+                                     /*   setState(() {
                                           _ImageUploadState._image =
                                               File(file.path);
                                         });*/
-                                        _ImageUploadState._image =File(file.path);
 
+                                         _ImageUploadState._image =File(file.path);
+                                        Navigator.of(context)..pop()..pop();
                                         Navigator.of(context).pop();
-                                       // setState(() =>{ _ImageUploadState._image =File(file.path)});
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) => ImageUpload( 
-                                                  //    userId:ImageUpload.userId ,
-                                                )));
+                                      
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ImageUpload(
+                                                   userId: loggedInUser.uid
+                                          )));
+                                    /* Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => HomeScreen(
+                                                  //  userId: loggedInUser.uid
+                                                 
+                                          )));*/
                                       }),
+                                      
                                   child: const Icon(Icons.check))
                             ],
                             content: SizedBox(
                                 child: AspectRatio(
-                                  aspectRatio: 1.58,
+                                  aspectRatio: 1.36,
                                   //aspectRatio: overlay.ratio!,
 
-                                  child: Container(width: 220,
-                                                 //  height: 100,
+                                  child: Container(width: 270,
+                                  
+                                                   height: 0,
                                     decoration: BoxDecoration(
                                         image: DecorationImage(
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fitWidth,
                                       alignment: FractionalOffset.center,
                                       image: FileImage(
                                         File(file.path),
